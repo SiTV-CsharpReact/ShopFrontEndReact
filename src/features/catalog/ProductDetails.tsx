@@ -76,7 +76,7 @@ export default function ProductDetails() {
                             </TableRow>
                             <TableRow>
                                 <TableCell>Quantity in stock</TableCell>
-                                <TableCell>{product.quantityStock}</TableCell>
+                                <TableCell>{product.quantityInStock}</TableCell>
                             </TableRow>
                         </TableBody>
                     </TableContainer>
