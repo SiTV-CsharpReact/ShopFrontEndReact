@@ -1,6 +1,6 @@
 import { Container, createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { Route ,Switch} from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import AboutPage from "../../features/about/AboutPage";
 import Catalog from "../../features/catalog/Catalog";
@@ -13,7 +13,6 @@ import ServerErroṛ̣̣ from "../errors/ServerError";
 import NotFound from "../errors/NotFound";
 import BasketPage from "../../features/baskets/BasketPage";
 import LoadingComponent from "./LoaddingComponent";
-import CheckoutPage from "../../features/checkout/CheckOutPage";
 import { useAppDispatch } from "../store/configureStore";
 import { fetchBasketAsync, setBasket } from "../../features/baskets/basketSlice";
 import Login from "../../features/account/Login";
@@ -21,10 +20,11 @@ import Register from "../../features/account/Register";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
 import PrivateRoute from "./PrivateRoute";
 import Orders from "../../features/orders/Order";
+import CheckoutWrapper from "../../features/checkout/CheckoutWrapper";
 
 function App() {
   const dispatch = useAppDispatch();
-  const[loading,setLoading] =useState(true);
+  const [loading, setLoading] = useState(true);
 
   const initApp = useCallback(async () => {
     try {
@@ -38,44 +38,46 @@ function App() {
   useEffect(() => {
     initApp().then(() => setLoading(false));
   }, [initApp])
- 
 
-  const [darkMode,setDarkMode] = useState(false);
-  const paletteType = darkMode? 'dark':'light';
- const theme = createTheme({
-   palette:{
-     mode:paletteType,
-     background:{
-       default:paletteType==='light'?'#eaeaea':'#121212'
-     }
-   }
- })
- function handleThemeChange(){
-   setDarkMode(!darkMode)
- }
- if(loading) return<LoadingComponent message='Initial app.....'/>
+
+  const [darkMode, setDarkMode] = useState(false);
+  const paletteType = darkMode ? 'dark' : 'light';
+  const theme = createTheme({
+    palette: {
+      mode: paletteType,
+      background: {
+        default: paletteType === 'light' ? '#eaeaea' : '#121212'
+      }
+    }
+  })
+  function handleThemeChange() {
+    setDarkMode(!darkMode)
+  }
+  if (loading) return <LoadingComponent message='Initial app.....' />
   return (
     <ThemeProvider theme={theme}>
       <ToastContainer position='bottom-right' hideProgressBar />
       <CssBaseline />
-      <Header darkMode={darkMode} handleThemeChange={handleThemeChange}/>
-      <Container>
-      <Switch>
+      <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
+      <Route exact path='/' component={HomePage} />
+      <Route path={'/(.+)'} render={() => (
+        <Container sx={{mb:4}}>
+          <Switch>
+            <Route exact path='/catalog' component={Catalog} />
+            <Route path='/catalog/:id' component={ProductDetails} />
+            <Route path='/contact' component={ContactPage} />
+            <Route path='/about' component={AboutPage} />
+            <Route path='/server-error' component={ServerErroṛ̣̣} />
+            <Route path='/basket' component={BasketPage} />
+            <PrivateRoute path='/checkout' component={CheckoutWrapper} />
+            <PrivateRoute path='/orders' component={Orders} />
+            <Route path='/login' component={Login} />
+            <Route path='/register' component={Register} />
+            <Route component={NotFound} />
+          </Switch>
+        </Container>
+      )} />
 
-        <Route exact path='/' component={HomePage}/>
-        <Route exact path='/catalog' component={Catalog}/>
-        <Route path='/catalog/:id' component={ProductDetails}/>
-        <Route path='/contact' component={ContactPage}/>
-        <Route path='/about' component={AboutPage}/>
-        <Route path='/server-error' component={ServerErroṛ̣̣}/>
-        <Route path='/basket' component={BasketPage}/>
-        <PrivateRoute path='/checkout' component={CheckoutPage}/>
-        <PrivateRoute path='/orders' component={Orders} />
-        <Route path='/login' component={Login}/>
-        <Route path='/register' component={Register}/>
-        <Route  component={NotFound}/>
-        </Switch>
-      </Container>
 
     </ThemeProvider>
   );
